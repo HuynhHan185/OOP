@@ -1,9 +1,11 @@
 package tuan6ChuyenXe;
-import java.text.DecimalFormat;
-import java.util.Objects;
-public class ChuyenXe {
 
-		protected String maChuyenXe;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Objects;
+
+public class ChuyenXe {
+	 protected String maChuyenXe;
 	    protected String hoTen;
 	    protected int soXe;
 	    protected double doanhThu;
@@ -47,10 +49,11 @@ public class ChuyenXe {
 	    }
 
 	    public void setDoanhThu(double doanhThu) throws Exception {
-	        if (doanhThu > 0)
+	        if (doanhThu > 0) {
 	            this.doanhThu = doanhThu;
-	        else
+	        } else {
 	            throw new Exception("Doanh thu phải lớn hơn không");
+	        }
 	    }
 
 	    @Override
@@ -110,7 +113,7 @@ public class ChuyenXe {
 
 	    // NoiThanh
 	    public static class NoiThanh extends ChuyenXe {
-	    	private int soTuyen;
+	        private int soTuyen;
 	        private double soKm;
 
 	        public NoiThanh(String maChuyenXe, String hoTen, int soXe, double doanhThu, int soTuyen, double soKm) {
@@ -145,107 +148,40 @@ public class ChuyenXe {
 	        }
 	    }
 
-	    // DanhSachChuyenXe (without ArrayList)
+	    // DanhSachChuyenXe
 	    public static class DanhSachChuyenXe {
-	        private ChuyenXe[] DS;
-	        private int count;
+	        private ArrayList<ChuyenXe> list = new ArrayList<>();
 
-	        public DanhSachChuyenXe(int maxSize) {
-	            DS = new ChuyenXe[maxSize];
-	            count = 0;
+	        public void them(ChuyenXe chuyenXe) {
+	            list.add(chuyenXe);
 	        }
 
-	        public void them(ChuyenXe xe) throws Exception {
-	            if (timKiem(xe.getMaChuyenXe()) == null) {
-	                if (count < DS.length) {
-	                    DS[count] = xe;
-	                    count++;
-	                } else {
-	                    throw new Exception("Danh sách chuyến xe đã đầy");
-	                }
-	            } else {
-	                throw new Exception("Mã chuyến xe đã trùng");
-	            }
-	        }
-
-	        public int timKiemViTri(String maCX) {
-	            for (int i = 0; i < count; i++) {
-	                if (DS[i].getMaChuyenXe().equalsIgnoreCase(maCX)) {
-	                    return i;
-	                }
-	            }
-	            return -1;
-	        }
-
-	        public ChuyenXe timKiem(String maCX) {
-	            int viTri = timKiemViTri(maCX);
-	            return (viTri != -1) ? DS[viTri] : null;
-	        }
-
-	        public void xoa(String maCX) {
-	            int viTri = timKiemViTri(maCX);
-	            if (viTri != -1) {
-	                for (int i = viTri; i < count - 1; i++) {
-	                    DS[i] = DS[i + 1];
-	                }
-	                count--;
-	            }
-	        }
-
-	        public void sua(ChuyenXe xe) {
-	            int viTri = timKiemViTri(xe.getMaChuyenXe());
-	            if (viTri != -1) {
-	                DS[viTri] = xe;
+	        public void hienThiDanhSach() {
+	            System.out.println(String.format("%-15s | %-20s | %-10s | %-15s | %-10s | %-15s",
+	                    "Mã Chuyến Xe", "Họ Tên", "Số Xe", "Doanh Thu", "Số Tuyến", "Nơi Đến"));
+	            for (ChuyenXe chuyenXe : list) {
+	                System.out.println(chuyenXe);
 	            }
 	        }
 
 	        public double tinhTongDoanhThuNoiThanh() {
-	            double tongDoanhThu = 0;
-	            for (int i = 0; i < count; i++) {
-	                if (DS[i] instanceof NoiThanh) {
-	                    tongDoanhThu += DS[i].getDoanhThu();
+	            double total = 0;
+	            for (ChuyenXe chuyenXe : list) {
+	                if (chuyenXe instanceof NoiThanh) {
+	                    total += chuyenXe.getDoanhThu();
 	                }
 	            }
-	            return tongDoanhThu;
+	            return total;
 	        }
-}
-	    public double tinhTongDoanhThuNgoaiThanh() {
-            double tongDoanhThu = 0;
-            for (int i = 0; i < count; i++) {
-                if (DS[i] instanceof NgoaiThanh) {
-                    tongDoanhThu += DS[i].getDoanhThu();
-                }
-            }
-            return tongDoanhThu;
-        }
 
-        public void hienThiDanhSach() {
-            for (int i = 0; i < count; i++) {
-                System.out.println(DS[i].toString());
-            }
-        }
-    }
-
-    // Main class
-    public static class Main {
-        public static void main(String[] args) {
-            try {
-                DanhSachChuyenXe dsChuyenXe = new DanhSachChuyenXe(10);
-
-                NoiThanh xeNoiThanh1 = new NoiThanh("NT01", "Nguyen Van A", 123, 1000000, 5, 50);
-                NgoaiThanh xeNgoaiThanh1 = new NgoaiThanh("XT01", "Tran Van B", 456, 3000000, "Da Nang", 3);
-
-                dsChuyenXe.them(xeNoiThanh1);
-                dsChuyenXe.them(xeNgoaiThanh1);
-
-                System.out.println("Danh sách các chuyến xe:");
-                dsChuyenXe.hienThiDanhSach();
-
-                System.out.println("Tổng doanh thu xe nội thành: " + dsChuyenXe.tinhTongDoanhThuNoiThanh());
-                System.out.println("Tổng doanh thu xe ngoại thành: " + dsChuyenXe.tinhTongDoanhThuNgoaiThanh());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-} 
-
+	        public double tinhTongDoanhThuNgoaiThanh() {
+	            double total = 0;
+	            for (ChuyenXe chuyenXe : list) {
+	                if (chuyenXe instanceof NgoaiThanh) {
+	                    total += chuyenXe.getDoanhThu();
+	                }
+	            }
+	            return total;
+	        }
+	    }
+	}
