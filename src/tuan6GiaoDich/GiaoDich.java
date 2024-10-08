@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class GiaoDich {
+public abstract class GiaoDich implements InterfaceGD {
 	protected String maGiaoDich;
     protected String ngayGiaoDich;
     protected double donGia;
@@ -100,9 +100,10 @@ class GiaoDichTienTe extends GiaoDich {
         return String.format("|%-10s|%-15s|%-10s|%-10d|%-10s|%-10.2f|", maGiaoDich, ngayGiaoDich, nf.format(donGia), soLuong, loaiTien, tiGia);
     }
 }
+
 // Lớp QuanLyGiaoDich
 class QuanLyGiaoDich {
-	private List<GiaoDich> danhSachGiaoDich;
+    private List<GiaoDich> danhSachGiaoDich;
 
     public QuanLyGiaoDich() {
         danhSachGiaoDich = new ArrayList<>();
@@ -113,8 +114,13 @@ class QuanLyGiaoDich {
     }
 
     public void xuatDanhSach() {
-        for (GiaoDich gd : danhSachGiaoDich) {
-            System.out.println(gd);
+        if (danhSachGiaoDich.isEmpty()) {
+            System.out.println("Danh sách giao dịch trống.");
+        } else {
+            System.out.println("Danh sách giao dịch hiện có:");
+            for (GiaoDich gd : danhSachGiaoDich) {
+                System.out.println(gd);
+            }
         }
     }
 
@@ -156,6 +162,32 @@ class QuanLyGiaoDich {
                 System.out.println(gd);
             }
         }
+    }
+    public GiaoDich timGiaoDichTheoMa(String maGD) {
+        for (GiaoDich gd : danhSachGiaoDich) {
+            if (gd.getMaGiaoDich().equals(maGD)) {
+                return gd;
+            }
+        }
+        return null; // Trả về null nếu không tìm thấy
+    }
+    public boolean suaGiaoDich(String maGD, GiaoDich giaoDichMoi) {
+        for (int i = 0; i < danhSachGiaoDich.size(); i++) {
+            if (danhSachGiaoDich.get(i).getMaGiaoDich().equals(maGD)) {
+                danhSachGiaoDich.set(i, giaoDichMoi); // Thay thế giao dịch cũ bằng giao dịch mới
+                return true;
+            }
+        }
+        return false; // Trả về false nếu không tìm thấy
+    }
+    public boolean xoaGiaoDich(String maGD) {
+        for (int i = 0; i < danhSachGiaoDich.size(); i++) {
+            if (danhSachGiaoDich.get(i).getMaGiaoDich().equals(maGD)) {
+                danhSachGiaoDich.remove(i); // Xóa giao dịch
+                return true;
+            }
+        }
+        return false; // Trả về false nếu không tìm thấy
     }
 }
 
